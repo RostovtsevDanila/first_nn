@@ -52,7 +52,7 @@ class NeuronNetwork:
             output_errors * final_outputs * (1. - final_outputs),
             numpy.transpose(hidden_outputs)
         )
-        self.w_hidden_to_output += self.lr * numpy.dot(
+        self.w_input_to_hidden += self.lr * numpy.dot(
             hidden_errors * hidden_outputs * (1. - hidden_outputs),
             numpy.transpose(inputs)
         )
