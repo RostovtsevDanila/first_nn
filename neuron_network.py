@@ -1,3 +1,4 @@
+import datetime
 import numpy
 from scipy.special import expit
 
@@ -29,6 +30,9 @@ class NeuronNetwork:
             scale=pow(self.output_nodes, -0.5),
             size=(self.output_nodes, self.hidden_nodes),
         )
+
+    def __int__(self, model: str):
+        pass
 
     def train(self, inputs, targets):
         """
@@ -71,3 +75,8 @@ class NeuronNetwork:
         final_outputs = self.activate(final_inputs)
 
         return final_outputs
+
+    def save_model(self, p):
+        with open(f"{p}_{datetime.datetime.now()}", "w") as f:
+            # f.write(self.w_input_to_hidden, self.w_hidden_to_output)
+            pass
