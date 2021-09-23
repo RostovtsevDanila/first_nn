@@ -28,7 +28,7 @@ def prepare_input_data(raw, max_source_val=255., min_target_val=0.001, max_targe
 
 if __name__ == '__main__':
     # create and train model
-    raw_targets, raw_inputs = read_from_csv(DATASET_TRAIN)
+    raw_targets, raw_inputs = read_from_csv(DATASET_TEST_100)
     print(f"RAW DATA\nTargets:\n{raw_targets}\nInputs:\n{raw_inputs}")
     inputs = prepare_input_data(raw_inputs)
     print(f"Prepared inputs:\n{inputs}")
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         print(f"\nTraining epoch#{epoch} done\n")
 
-    # todo Save model
+    nnw.save_model("./models")
 
     # Testing
     print("\nTesting model ...\n")

@@ -1,4 +1,6 @@
 import datetime
+import json
+
 import numpy
 from scipy.special import expit
 
@@ -30,9 +32,6 @@ class NeuronNetwork:
             scale=pow(self.output_nodes, -0.5),
             size=(self.output_nodes, self.hidden_nodes),
         )
-
-    def __int__(self, model: str):
-        pass
 
     def train(self, inputs, targets):
         """
@@ -76,7 +75,20 @@ class NeuronNetwork:
 
         return final_outputs
 
-    def save_model(self, p):
-        with open(f"{p}_{datetime.datetime.now()}", "w") as f:
-            # f.write(self.w_input_to_hidden, self.w_hidden_to_output)
-            pass
+    def save_model(self, folder):
+        with open(f"{folder}/{datetime.datetime.now().timestamp()}_{self.input_nodes}_{self.hidden_nodes}_{self.output_nodes}_{self.lr}.json", "w") as f:
+            model_dict = {
+                "activate": "sigmoid",
+                "params": {
+                    "input_nodes": self.input_nodes,
+                    "hidden_nodes": self.hidden_nodes,
+                    "output_nodes": self.output_nodes,
+                    "lr": self.lr,
+                },
+                "widths": {
+                    "w_input_to_hidden": self.w_input_to_hidden.tolist(),
+                    "w_hidden_to_output": self.w_hidden_to_output.tolist(),
+                }
+            }
+            f.write(json.dumps(model_dict, indent=2))
+
