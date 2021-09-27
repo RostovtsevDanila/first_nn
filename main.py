@@ -1,7 +1,7 @@
 from typing import List
 import numpy
 
-from neuron_network import NeuronNetwork
+from neuron_network import NeuronNetwork, NeuronData
 
 DATASET_TEST = "./mnist_data/mnist_test.csv"
 DATASET_TEST_10 = "./mnist_data/mnist_test_10.csv"
@@ -33,34 +33,37 @@ if __name__ == '__main__':
     inputs = prepare_input_data(raw_inputs)
     print(f"Prepared inputs:\n{inputs}")
 
-    input_nodes = len(raw_inputs[0])  # image width * height
-    hidden_nodes = 300
-    output_nodes = 10  # digits [0, 1, ... 8, 9]
-    learning_rate = 0.25
-    nnw = NeuronNetwork(
-        input_nodes,
-        hidden_nodes,
-        output_nodes,
-        learning_rate,
+    # input_nodes = len(raw_inputs[0])  # image width * height
+    # hidden_nodes = 300
+    # output_nodes = 10  # digits [0, 1, ... 8, 9]
+    # learning_rate = 0.25
+    neuron_properties = NeuronData(
+        activate=NeuronData.Activate.SIGMOID,
+        input_layout=len(raw_inputs[0]),
+        output_layout=10,
+        hidden_layouts=[100, 100],
+        learning_rate=0.25
     )
-    print(
-        f"\nInitiated network parameters:\n"
-        f"input_nodes:\t{input_nodes}\n"
-        f"hidden_nodes:\t{hidden_nodes}\n"
-        f"output_nodes:\t{output_nodes}\n"
-        f"learning_rate:\t{learning_rate}\n"
-    )
+    nnw = NeuronNetwork(prop=neuron_properties)
+    print(str(nnw))
+    # print(
+    #     f"\nInitiated network parameters:\n"
+    #     f"input_nodes:\t{input_nodes}\n"
+    #     f"hidden_nodes:\t{hidden_nodes}\n"
+    #     f"output_nodes:\t{output_nodes}\n"
+    #     f"learning_rate:\t{learning_rate}\n"
+    # )
     for epoch in range(EPOCH_COUNT):
         print(f"Start training epoch #{epoch} ...")
         for i, target in enumerate(raw_targets):
-            targets = numpy.zeros(output_nodes) + 0.001
+            targets = numpy.zeros(10) + 0.001
             targets[int(target)] = 0.999
             print(f"Epoch: #{epoch}\tStep:{i}\tTarget: {target}\tPrepared targets: {targets}")
             nnw.train(inputs[i], targets)
 
         print(f"\nTraining epoch#{epoch} done\n")
 
-    nnw.save_model("./models")
+    # nnw.save_model("./models")
 
     # Testing
     print("\nTesting model ...\n")
