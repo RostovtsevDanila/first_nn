@@ -49,7 +49,7 @@ class NeuronNetwork:
 
             self.layouts = []
             self.layouts.append(self.properties.input_layout)
-            [self.layouts.append(l) for l in self.properties.hidden_layouts]
+            [self.layouts.append(lo) for lo in self.properties.hidden_layouts]
             self.layouts.append(self.properties.output_layout)
 
             self.widths = []
@@ -113,21 +113,28 @@ class NeuronNetwork:
         errors = []
 
         for w in self.widths:
-            inputs = numpy.dot(w, inputs)
-            outputs.append(self.activate(inputs))
+            outputs.append(self.activate(inputs := numpy.dot(w, inputs)))
+
+        errors.append(targets - outputs[-1])
+        for i, o in reversed(list(enumerate(outputs[:-1]))):
+            errors.append(numpy.dot(self.widths[i].T, o))
+        errors.reverse()
+
+        print(len(self.layouts))
+        print(len(self.widths))
+        print(len(outputs))
+        print(len(errors))
 
         for i, o in reversed(list(enumerate(outputs))):
-            errors.append(targets - o)
-            targets = self.widths[i].T
-
-        w_len = len(self.widths)
-        for i in reversed(range(w_len)):
+            print(f"i = {i}")
             self.widths[i] += self.properties.learning_rate * numpy.dot(
-                errors[w_len - i] * outputs[i] * (1. - outputs[i]),
-                numpy.transpose(outputs[int(i if i != 0 else first_inputs)])
+                errors[i] * outputs[i] * (1. - outputs[i]),
+                numpy.transpose(outputs[i])
             )
-
-
+        # # self.widths[0] += self.properties.learning_rate * numpy.dot(
+        #     errors[0] * outputs[0] * (1. - outputs[0]),
+        #     numpy.transpose(first_inputs)
+        # )
 
         # hidden_inputs = numpy.dot(self.w_input_to_hidden, inputs)
         # hidden_outputs = self.activate(hidden_inputs)
@@ -157,8 +164,8 @@ class NeuronNetwork:
 
         outputs = []
         for w in self.widths:
-            inputs = numpy.dot(w, inputs)
-            outputs = self.activate(inputs)
+            # inputs = numpy.dot(w, inputs)
+            outputs = self.activate(inputs := numpy.dot(w, inputs))
 
         # hidden_inputs = numpy.dot(self.w_input_to_hidden, inputs)
         # hidden_outputs = self.activate(hidden_inputs)
